@@ -1,11 +1,17 @@
 "use client";
-import React, { useRef } from "react";
-import { FaUsers, FaRegClock } from "react-icons/fa";
+import React, { useRef, useState } from "react";
+import {
+  FaUsers,
+  FaRegClock,
+  FaUndo,
+  FaRedoAlt,
+  FaSyncAlt,
+} from "react-icons/fa";
 import Image from "next/image";
 import StarRating from "./starRating/StarRating";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { toPng } from "html-to-image";
-import { FaPlus, FaMinus, FaRedo, FaDownload } from "react-icons/fa";
+import { FaPlus, FaMinus, FaDownload } from "react-icons/fa";
 
 interface Props {
   gameName: string;
@@ -56,6 +62,11 @@ const PostPreview = ({
       });
   };
 
+  const [rotation, setRotation] = useState(0);
+
+  const rotateLeft = () => setRotation((prev) => prev - 1);
+  const rotateRight = () => setRotation((prev) => prev + 1);
+
   return (
     <div className="w-full md:w-1/2 p-4 bg-gray-100 shadow-md flex flex-col items-center">
       <div
@@ -68,9 +79,7 @@ const PostPreview = ({
             initialScale={1}
             minScale={1}
             maxScale={3}
-            wheel={{
-              step: 0.1,
-            }}
+            wheel={{ step: 0.1 }}
             disablePadding={false}
             limitToBounds={false}
           >
@@ -78,16 +87,27 @@ const PostPreview = ({
               <>
                 <div>
                   <TransformComponent>
-                    <div style={{ width: "600px", height: "600px" }}>
+                    <div
+                      style={{
+                        width: "600px",
+                        height: "600px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transform: `rotate(${rotation}deg)`, // Aplica la rotación aquí
+                        transition: "transform 0.3s ease",
+                      }}
+                    >
                       <Image
                         src={image}
                         alt="Post"
                         width={600}
                         height={600}
-                        className={`${isBrightness ? " brightness-110 " : ""} ${
-                          isContrast ? " contrast-125 " : ""
-                        }
-                        ${isSaturate ? " saturate-150 " : ""}`}
+                        className={`${
+                          isBrightness ? " brightness-[1.10] " : ""
+                        } ${isContrast ? " contrast-[1.10] " : ""} ${
+                          isSaturate ? " saturate-[1.10] " : ""
+                        }`}
                       />
                     </div>
                   </TransformComponent>
@@ -110,7 +130,19 @@ const PostPreview = ({
                     onClick={() => resetTransform()}
                     className="bg-jdm text-white p-2 rounded-md"
                   >
-                    <FaRedo size={20} />
+                    <FaSyncAlt size={20} />
+                  </button>
+                  <button
+                    onClick={rotateLeft}
+                    className="bg-jdm text-white p-2 rounded-md"
+                  >
+                    <FaUndo size={20} />
+                  </button>
+                  <button
+                    onClick={rotateRight}
+                    className="bg-jdm text-white p-2 rounded-md"
+                  >
+                    <FaRedoAlt size={20} />
                   </button>
                   <button
                     onClick={handleCreateImage}
